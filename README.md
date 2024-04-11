@@ -16,7 +16,8 @@ Use the provided methods to read, modify, or add values.
 Save the changes back to the INI file.
 
 Example:
- ```C# 
+ ```C#
+using IniFileSharp;
 // Initialize the INIFile object
 IniSharp iniFile = new IniSharp("config.ini");
 
