@@ -1,2 +1,33 @@
 # IniSharp
 This is a C# Class that provides functionality for reading and writing INI  files. INI files are commonly used for configuration purposes in many applications.
+
+Features:
+
+Reading and parsing INI files: The library allows you to easily read and parse INI files, extracting key-value pairs and sections.
+Retrieving values: You can retrieve values from specific sections and keys in the INI file.
+Modifying values: The library provides methods to modify existing values in the INI file.
+Adding new sections and keys: You can add new sections and keys to the INI file.
+Writing and saving changes: Once you have made modifications to the INI file, you can save the changes back to the file.
+Usage:
+
+Initialize the INIFile object with the path to the INI file.
+Use the provided methods to read, modify, or add values.
+Save the changes back to the INI file.
+
+Example:
+ ```C# 
+// Initialize the INIFile object
+IniSharp iniFile = new IniSharp("config.ini");
+
+// Read values from the INI file
+string value = iniFile.GetValue("SectionName", "KeyName");
+
+// Modify an existing value
+iniFile.SetValue("SectionName", "KeyName", "NewValue");
+
+// Add a new section and key
+iniFile.SetValue("NewSection", "NewKey", "Value");
+string value = iniFile.GetValue("SectionName", "KeyName","DefualtValue");
+ ``` 
+
+ 
