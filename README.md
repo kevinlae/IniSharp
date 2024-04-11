@@ -29,6 +29,21 @@ iniFile.SetValue("SectionName", "KeyName", "NewValue");
 // Add a new section and key
 iniFile.SetValue("NewSection", "NewKey", "Value");
 string value = iniFile.GetValue("SectionName", "KeyName","DefualtValue");
+
+//Delete a Key
+DeleteKey(section,key);
+
+//Delete a Section
+DeleteSection(section);
+
+//Delete All Sections
+DeleteAllSection();
+
+// Get All sections
+List<string> sections=GetSections();
+
+// Get All Keys
+List<string> Keys=GetKeys(section);
  ``` 
 
  
