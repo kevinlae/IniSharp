@@ -17,7 +17,9 @@ Save the changes back to the INI file.
 
 Example:
  ```C#
+
 using IniFileSharp;
+
 // Initialize the INIFile object
 IniSharp iniFile = new IniSharp("config.ini");
 
