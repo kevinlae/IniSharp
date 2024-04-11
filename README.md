@@ -1,6 +1,6 @@
 # IniSharp
 This is a C# Class that provides functionality for reading and writing INI  files. INI files are commonly used for configuration purposes in many applications.
-Supports Linux,Android,iOS,macOS,Unity.
+Supports Windows,Linux,Android,iOS,macOS,Unity.
 
 Features:
 
