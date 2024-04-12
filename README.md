@@ -23,6 +23,15 @@ using IniFileSharp;
 // Initialize the INIFile object
 IniSharp iniFile = new IniSharp("config.ini");
 
+//or Initialize the INIFile object with commentChar 
+IniSharp iniFile = new IniSharp("config.ini",';');
+
+//or Initialize the INIFile object with Encoding.UTF8 
+IniSharp iniFile = new IniSharp("config.ini",Encoding.UTF8);
+
+//or Initialize the INIFile object with commentChar and Encoding.UTF8 
+IniSharp iniFile = new IniSharp("config.ini",';',Encoding.UTF8);
+
 // Read values from the INI file
 string value = iniFile.GetValue("SectionName", "KeyName");
 
