@@ -10,11 +10,11 @@ namespace IniFileSharp
     {
         private string filePath;
 
-        private Encoding encoding;
-
-        private const char commentChar = '#';
+        private  char commentChar = '#';
 
         private static object lockObject = new object();
+
+        public Encoding FileEncoding { get; private set; }
 
         public IniSharp(string filePath)
         {
@@ -23,8 +23,22 @@ namespace IniFileSharp
             {
                 File.Create(this.filePath).Close();
             }
-            encoding = GetFileEncoding(this.filePath);
+            FileEncoding = GetFileEncoding();
         }
+        public IniSharp(string filePath,char commentChar):this(filePath)
+        { 
+            this.commentChar = commentChar;
+        }
+        public IniSharp(string filePath, Encoding fileEncoding) : this(filePath)
+        {
+            FileEncoding = fileEncoding;
+        }
+        public IniSharp(string filePath, char commentChar, Encoding fileEncoding) : this(filePath)
+        {
+            this.commentChar = commentChar;
+            FileEncoding = fileEncoding;
+        }
+
         /// <summary>
         /// Retrieves a string from the specified section of an ini file.
         /// </summary>
@@ -47,7 +61,7 @@ namespace IniFileSharp
                 throw new ArgumentException("Key cannot be null or whitespace.", "key");
             }
 
-            List<string> lines = File.ReadAllLines(filePath, encoding).ToList();
+            List<string> lines = File.ReadAllLines(filePath, FileEncoding).ToList();
             (int sectionNum, int keyNum) = FindSectionAndKey(section, key, lines);
             if (sectionNum != -1 && keyNum != -1)
             {
@@ -66,7 +80,7 @@ namespace IniFileSharp
                         lines.Insert(sectionNum + 1, $"{key}={defaultValue}");
                         lock (lockObject)
                         {
-                            File.WriteAllLines(filePath, lines, encoding);
+                            File.WriteAllLines(filePath, lines, FileEncoding);
                         }
                     }
                 }
@@ -107,7 +121,7 @@ namespace IniFileSharp
                 throw new ArgumentException("Section cannot be null or whitespace.", "section");
             }
 
-            List<string> lines = File.ReadAllLines(filePath, encoding).ToList();
+            List<string> lines = File.ReadAllLines(filePath, FileEncoding).ToList();
             (int sectionNum, int keyNum) = FindSectionAndKey(section, key, lines);
             if (sectionNum == -1)
             {
@@ -185,7 +199,7 @@ namespace IniFileSharp
                 }
                 lock (lockObject)
                 {
-                    File.WriteAllLines(filePath, lines, encoding);
+                    File.WriteAllLines(filePath, lines, FileEncoding);
                 }
             }
             return true;
@@ -305,7 +319,7 @@ namespace IniFileSharp
         {
             try
             {
-                List<string> lines = File.ReadLines(filePath, encoding).ToList();
+                List<string> lines = File.ReadLines(filePath, FileEncoding).ToList();
                 for (int i = 0; i < lines.Count; i++)
                 {
                     if (!lines[i].Contains('[') && !lines[i].Contains(']') && !lines[i].Contains('=') && !lines[i].Contains(commentChar))
@@ -316,7 +330,7 @@ namespace IniFileSharp
                 }
                 lock (lockObject)
                 {
-                    File.WriteAllLines(filePath, lines, encoding);
+                    File.WriteAllLines(filePath, lines, FileEncoding);
                 }
             }
             catch (Exception ex)
@@ -333,7 +347,7 @@ namespace IniFileSharp
             }
             List<string> keys = new List<string>();
 
-            List<string> lines = File.ReadAllLines(filePath, encoding).ToList();
+            List<string> lines = File.ReadAllLines(filePath, FileEncoding).ToList();
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i].TrimStart();
@@ -369,7 +383,7 @@ namespace IniFileSharp
 
         public List<string> GetSections()
         {
-            List<string> lines = File.ReadAllLines(filePath, encoding).ToList();
+            List<string> lines = File.ReadAllLines(filePath, FileEncoding).ToList();
             List<string> sections = new List<string>();
             for (int i = 0; i < lines.Count; i++)
             {
@@ -390,7 +404,7 @@ namespace IniFileSharp
 
 
 
-        public Encoding GetFileEncoding(string filePath)
+        private Encoding GetFileEncoding()
         {
             try
             {
