@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace IniFileSharp
     {
         private string filePath;
 
-        private  char commentChar = '#';
+        private char commentChar = '#';
 
         private static object lockObject = new object();
 
@@ -25,8 +25,8 @@ namespace IniFileSharp
             }
             FileEncoding = GetFileEncoding();
         }
-        public IniSharp(string filePath,char commentChar):this(filePath)
-        { 
+        public IniSharp(string filePath, char commentChar) : this(filePath)
+        {
             this.commentChar = commentChar;
         }
         public IniSharp(string filePath, Encoding fileEncoding) : this(filePath)
@@ -39,17 +39,7 @@ namespace IniFileSharp
             FileEncoding = fileEncoding;
         }
 
-        /// <summary>
-        /// Retrieves a string from the specified section of an ini file.
-        /// </summary>
-        /// <param name="section">The name of the section containing the key.</param>
-        /// <param name="key">The name of the key.</param>
-        /// <param name="defaultValue">The default value to return if the key is not found.</param>
-        /// <returns>
-        /// If the function succeeds, the return value is the retrieved string.
-        /// If the function fails, the return value is the default value specified by defaultValue.
-        /// </returns>
-        /// <exception cref="ArgumentException"></exception>
+ 
         private string GetPrivateProfileString(string section, string key, string defaultValue = null)
         {
             if (string.IsNullOrWhiteSpace(section))
@@ -99,21 +89,7 @@ namespace IniFileSharp
             return defaultValue;
         }
 
-        /// <summary>
-        /// Writes a string to a specific key within a section in an INI file.
-        /// </summary>
-        /// <param name="section">The name of the section in the INI file.</param>
-        /// <param name="key">The name of the key within the specified section.</param>
-        /// <param name="value">The string value to be written to the key.</param>
-        /// <returns><c>true</c> if the operation is successful; otherwise, <c>false</c>.</returns>
-        ///
-        /// <exception cref="ArgumentException">Thrown when one or more of the input arguments is invalid.</exception>
-        ///
-        /// <remarks>
-        /// This method writes the specified string value to the specified key within the specified section in an INI file.
-        /// If the section or the key does not exist, they will be created. If the key already has a value, it will be overwritten.
-        /// The operation may fail if the INI file is read-only or if there are insufficient permissions to write to the file.
-        /// </remarks>
+ 
         private bool WritePrivateProfileString(string section, string key, string value)
         {
             if (string.IsNullOrWhiteSpace(section))
@@ -205,23 +181,7 @@ namespace IniFileSharp
             return true;
         }
 
-        /// <summary>
-        /// Finds the section and key indices within a list of lines representing an INI file.
-        /// </summary> 
 
-        /// <param name="section">The name of the section to search for.</param>
-        /// <param name="key">The name of the key to search for.</param>
-        /// <param name="lines">A list of strings representing the lines of the INI file.</param>
-        /// <returns>A <see cref="ValueTuple{T1,T2}"/> containing the indices of the section and key respectively,
-        /// or (-1, -1) if the section or key is not found.</returns>
-        ///
-        /// <exception cref="ArgumentNullException">Thrown when the section, key, or lines parameter is null.</exception>
-        ///
-        /// <remarks>
-        /// This method searches for the specified section and key within the list of lines representing an INI file.
-        /// It returns a tuple containing the indices of the section and key if found, or (-1, -1) if either the section or key is not found.
-        /// The search is case-sensitive, and the section and key names must match exactly.
-        /// </remarks>
 
         private (int sectionNum, int keyNum) FindSectionAndKey(string section, string key, List<string> lines)
         {
@@ -230,27 +190,25 @@ namespace IniFileSharp
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i].TrimStart();
-                if (line.StartsWith("[") && line.Contains(']'))
+                if (line.StartsWith("[") && lines[i].Contains(']'))
                 {
                     int endIndex = line.IndexOf(']');
-                    string lineSection = line.Substring(1, endIndex - 1).Trim();
+                    int startIndex = line.IndexOf('[');
+                    string lineSection = line.Substring(startIndex + 1, endIndex - 1);
                     if (string.Equals(lineSection, section, StringComparison.OrdinalIgnoreCase))
                     {
                         sectionNum = i;
-                        if (key is null)
-                        {
-                            break;
-                        }
+                        continue;
                     }
                     else if (sectionNum != -1)
                     {
                         break;
                     }
                 }
-                else if (sectionNum != -1 && line.StartsWith(key, StringComparison.OrdinalIgnoreCase) && line.Contains("="))
+                else if (sectionNum != -1 && line.StartsWith(key, StringComparison.OrdinalIgnoreCase) && lines[i].Contains("="))
                 {
                     int equalsIndex = line.IndexOf('=', key.Length);
-                    string betweenKeyAndEquals = line.Substring(key.Length, equalsIndex - key.Length).Trim();
+                    string betweenKeyAndEquals = line.Substring(key.Length, equalsIndex - key.Length);
                     if (string.IsNullOrWhiteSpace(betweenKeyAndEquals))
                     {
                         keyNum = i;
@@ -261,12 +219,13 @@ namespace IniFileSharp
             return (sectionNum, keyNum);
         }
 
+
         public string GetValue(string section, string key, string defaultValue = null)
         {
             string result = GetPrivateProfileString(section, key, defaultValue);
             if (result == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentException("Result cannot be null.");
             }
             return result;
         }
