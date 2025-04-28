@@ -221,13 +221,8 @@ namespace IniFileSharp
 
 
         public string GetValue(string section, string key, string defaultValue = null)
-        {
-            string result = GetPrivateProfileString(section, key, defaultValue);
-            if (result == null)
-            {
-                throw new ArgumentException("Result cannot be null.");
-            }
-            return result;
+        { 
+            return GetPrivateProfileString(section, key, defaultValue) ?? defaultValue;
         }
 
         public bool SetValue(string section, string key, string value)
