@@ -341,8 +341,7 @@ namespace IniFileSharp
         }
 
         private Encoding DetectEncoding()
-        {
-            // 保留原有的编码检测逻辑（不变）
+        { 
             try
             {
                 using var fs = new FileStream(_filePath, FileMode.Open, FileAccess.Read);
@@ -367,39 +366,36 @@ namespace IniFileSharp
             }
         }
 
-        private bool IsUtf8(FileStream fs)
-        {
-            // 保留原有 IsUtf8Bytes 逻辑，此处略
-            // 可复用之前实现的 private bool IsUtf8Bytes(byte[] ...) 
-            byte[] buffer = new byte[4096];
-            int bytesLength = fs.Read(buffer, 0, 4096);
-            int i = 0;
-            while (i < bytesLength)
-            {
-                byte currentByte = buffer[i++];
+       private bool IsUtf8(FileStream fs)
+       { 
+           byte[] buffer = new byte[4096];
+           int bytesLength = fs.Read(buffer, 0, 4096);
+           int i = 0;
+           while (i < bytesLength)
+           {
+               byte currentByte = buffer[i++];
 
-                // 判断 UTF-8 编码的规则
-                if (currentByte >= 0x80)
-                {
-                    // 多字节字符
-                    int bytesCount = 0;
-                    if ((currentByte & 0xE0) == 0xC0) bytesCount = 1;
-                    else if ((currentByte & 0xF0) == 0xE0) bytesCount = 2;
-                    else if ((currentByte & 0xF8) == 0xF0) bytesCount = 3;
-                    else if ((currentByte & 0xFC) == 0xF8) bytesCount = 4;
-                    else return false; // 无效字节序列
+               // 判断 UTF-8 编码的规则
+               if (currentByte >= 0x80)
+               {
+                   // 多字节字符
+                   int bytesCount = 0;
+                   if ((currentByte & 0xE0) == 0xC0) bytesCount = 1;
+                   else if ((currentByte & 0xF0) == 0xE0) bytesCount = 2;
+                   else if ((currentByte & 0xF8) == 0xF0) bytesCount = 3;
+                   else if ((currentByte & 0xFC) == 0xF8) bytesCount = 4;
+                   else return false; // 无效字节序列
 
-                    // 检查后续字节是否合法
-                    for (int j = 0; j < bytesCount; j++)
-                    {
-                        if (i >= bytesLength || (bytes[i++] & 0xC0) != 0x80)
-                            return false; // 无效字节序列
-                    }
-                }
-            }
-            return false; // 示例简化，实际请嵌入原方法
-            return false; // 示例简化，实际请嵌入原方法
-        }
+                   // 检查后续字节是否合法
+                   for (int j = 0; j < bytesCount; j++)
+                   {
+                       if (i >= bytesLength || (buffer[i++] & 0xC0) != 0x80)
+                           return false; // 无效字节序列
+                   }
+               }
+           }
+           return false;  
+       }
         #endregion
 
         #region 内部数据模型
